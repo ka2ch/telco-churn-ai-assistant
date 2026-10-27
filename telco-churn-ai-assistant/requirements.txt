@@ -1,0 +1,22 @@
+# Data
+pandas
+numpy
+
+# Modeling
+scikit-learn
+xgboost
+shap
+
+# Charts
+matplotlib
+plotly
+
+# AI assistant
+anthropic
+python-dotenv
+
+# Dashboard
+streamlit
+
+# Notebooks
+jupyter

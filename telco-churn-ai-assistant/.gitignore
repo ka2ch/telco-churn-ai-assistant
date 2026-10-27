@@ -1,0 +1,30 @@
+# --- Project-specific ---
+data/*
+!data/.gitkeep
+*.db
+*.sqlite
+.env
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# --- Virtual environment ---
+venv/
+.venv/
+env/
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+
+# --- Streamlit secrets ---
+.streamlit/secrets.toml
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
