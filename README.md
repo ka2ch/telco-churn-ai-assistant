@@ -15,7 +15,7 @@ I worked for about six years as a sales associate at a Bell Canada authorized de
 |---|---|---|
 | 1. Data pipeline | Load the raw CSV, clean it, and split it into SQL tables | ✅ Done |
 | 2. SQL analysis | Explore churn patterns with SQL queries | ✅ Done |
-| 3. Churn model | Predict churn risk and explain *why* each customer is at risk | ⬜ To do |
+| 3. Churn model | Predict churn risk and explain *why* each customer is at risk | ✅ Done |
 | 4. AI assistant | Ask questions in plain English → SQL → answer | ⬜ To do |
 | 5. Dashboard | Streamlit app with key numbers, charts, risk list, and chat | ⬜ To do |
 
@@ -62,6 +62,7 @@ Then build the database and run the analysis:
 ```bash
 python src/load_data.py       # CSV -> data/telco.db (3 tables)
 python src/run_analysis.py    # runs every query in sql/analysis.sql
+python src/train_model.py     # trains the model, saves risk scores to churn_predictions
 ```
 
 More steps will be added as each part is built.
@@ -85,5 +86,30 @@ All numbers come from [`sql/analysis.sql`](sql/analysis.sql) on 7,043 customers.
 - Churned customers are 26.5% of the base but **30.5% of monthly revenue (~$139K of $456K)**, because higher-paying customers leave more often.
 
 **Note:** these are patterns, not proven causes. For example, customers on automatic payment are also more likely to be on long contracts. The churn model in Part 3 looks at all factors together to separate the strongest signals.
+
+### Churn model
+
+Two models were compared on 20% of customers held back from training:
+
+| Model | AUC | Recall | Precision | Accuracy |
+|---|---|---|---|---|
+| Logistic Regression | 0.842 | 0.559 | 0.657 | 0.806 |
+| XGBoost | **0.844** | 0.513 | 0.655 | 0.799 |
+
+- **AUC** — how well the model ranks customers who leave above those who stay (0.5 = guessing, 1.0 = perfect)
+- **Recall** — of customers who actually left, how many were flagged as high risk
+- **Precision** — of customers flagged as high risk, how many actually left
+
+The two models are nearly tied. XGBoost was picked by AUC, but the simpler Logistic Regression is easier to explain and catches slightly more leavers, so it would be a reasonable choice in production too.
+
+**Honest scoring:** every customer's risk score comes from 5-fold cross-validation, so no customer is scored by a model that saw them during training.
+
+**Top factors** (match the SQL findings above): month-to-month contract, short tenure, fiber internet, higher monthly bill, paying by electronic check.
+
+**Explanations:** each customer gets their top 3 risk reasons in plain English (e.g. *"Customer for only 1 month · Month-to-month contract · Fiber optic internet"*), stored with their score in the `churn_predictions` table.
+
+**Actionable list:** among customers who haven't left yet, **513 are high risk** (≥ 50%) and 934 medium risk (25–50%). The riskiest are almost all in their first month, on month-to-month contracts, with fiber internet — suggesting an early-tenure offer to switch to a longer contract.
+
+Gender was left out of the model on purpose: it adds almost no predictive value, and retention offers shouldn't be decided by gender.
 
 **Compared with my store experience:** month-to-month customers and customers with high bills were the ones most often asking about cancelling or switching. The data strongly supports both.

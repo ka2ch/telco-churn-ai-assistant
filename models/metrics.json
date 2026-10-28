@@ -1,0 +1,29 @@
+{
+  "best_model": "XGBoost",
+  "test_results": {
+    "Logistic Regression": {
+      "auc": 0.842,
+      "recall": 0.559,
+      "precision": 0.657,
+      "accuracy": 0.806
+    },
+    "XGBoost": {
+      "auc": 0.844,
+      "recall": 0.513,
+      "precision": 0.655,
+      "accuracy": 0.799
+    }
+  },
+  "top_factors": {
+    "contract_Month-to-month": 0.6200000047683716,
+    "tenure_months": 0.5090000033378601,
+    "internet_service_Fiber optic": 0.3070000112056732,
+    "monthly_charges": 0.22599999606609344,
+    "payment_method_Electronic check": 0.18400000035762787,
+    "total_charges": 0.17399999499320984,
+    "contract_Two year": 0.1509999930858612,
+    "internet_service_No": 0.1379999965429306,
+    "paperless_billing": 0.13600000739097595,
+    "online_security": 0.11400000005960464
+  }
+}
